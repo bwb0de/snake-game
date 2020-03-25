@@ -9,6 +9,6 @@ Foram implementadas pequenas alterações:
  - foi incluída uma licença no projeto
 
 
-Para rodar o projeto execute, no Debian 10:
+Para rodar o projeto execute, no Debian 10:           
 Execute <code>pip3 install pygame</code>
 Rode o jogo com <code>python snake.py</code>
