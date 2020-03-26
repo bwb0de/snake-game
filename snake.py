@@ -16,11 +16,8 @@ def on_grid_random():
 def collision(c1, c2):
     return (c1[0] == c2[0]) and (c1[1] == c2[1])
 
-UP = 0
-RIGHT = 1
-DOWN = 2
-LEFT = 3
-
+branco = 255,255,255
+vermelho = 255,0,0
 
 #Definição da janela do jogo e da taxa de frames inicial
 pygame.init()
@@ -30,16 +27,25 @@ clock = pygame.time.Clock()
 game_speed = 14
 
 #Instâncias do jogo
-snake = [(200, 200), (210, 200), (220,200)]
-snake_skin = pygame.Surface((10,10))
-snake_skin.fill((255,255,255))
+class Snake:
+    def __init__(self):
+        self.corpo = [(200, 200), (210, 200), (220,200)]
+        self.pele = pygame.Surface((10,10))
+        self.pele.fill(branco)
+        self.direction = "Descendo"
 
-apple_pos = on_grid_random()
-apple = pygame.Surface((10,10))
-apple.fill((255,0,0))
+serpente = Snake()
+
+class Food:
+    def __init__(self):
+        self.posicao = on_grid_random()
+        self.pele = pygame.Surface((10,10))
+        self.pele.fill(vermelho)
+
+comida = Food()
 
 #Outras variáveis globais
-snake_direction = DOWN
+serpente.direction = "Descendo"
 font = pygame.font.Font('freesansbold.ttf', 18)
 score = 0
 game_over = False
@@ -54,45 +60,45 @@ while True:
                 exit()
 
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_UP and snake_direction != DOWN:
-                    snake_direction = UP
-                if event.key == pygame.K_DOWN and snake_direction != UP:
-                    snake_direction = DOWN
-                if event.key == pygame.K_LEFT and snake_direction != RIGHT:
-                    snake_direction = LEFT
-                if event.key == pygame.K_RIGHT and snake_direction != LEFT:
-                    snake_direction = RIGHT
+                if event.key == pygame.K_UP and serpente.direction != "Descendo":
+                    serpente.direction = "Subindo"
+                if event.key == pygame.K_DOWN and serpente.direction != "Subindo":
+                    serpente.direction = "Descendo"
+                if event.key == pygame.K_LEFT and serpente.direction != "para Direita":
+                    serpente.direction = "para Esquerda"
+                if event.key == pygame.K_RIGHT and serpente.direction != "para Esquerda":
+                    serpente.direction = "para Direita"
 
         
         ### Regras de colisão
-        if collision(snake[0], apple_pos):
-            apple_pos = on_grid_random()
-            snake.append((0,0))
+        if collision(serpente.corpo[0], comida.posicao):
+            comida.posicao = on_grid_random()
+            serpente.corpo.append((0,0))
             score = score + 1
             game_speed += 0.05
             
         # Verificando se a serpente colide com as bordas
-        if snake[0][0] == 600 or snake[0][1] == 600 or snake[0][0] < 0 or snake[0][1] < 0:
+        if serpente.corpo[0][0] == 600 or serpente.corpo[0][1] == 600 or serpente.corpo[0][0] < 0 or serpente.corpo[0][1] < 0:
             game_over = True
         
         # Verificando se a serpente colide com o próprio corpo
-        for i in range(1, len(snake) - 1):
-            if snake[0][0] == snake[i][0] and snake[0][1] == snake[i][1]:
+        for i in range(1, len(serpente.corpo) - 1):
+            if serpente.corpo[0][0] == serpente.corpo[i][0] and serpente.corpo[0][1] == serpente.corpo[i][1]:
                 game_over = True
         
         ### Atualizando o valor da posição da serpente
-        for i in range(len(snake) - 1, 0, -1):
-            snake[i] = (snake[i-1][0], snake[i-1][1])
+        for i in range(len(serpente.corpo) - 1, 0, -1):
+            serpente.corpo[i] = (serpente.corpo[i-1][0], serpente.corpo[i-1][1])
             
         # Movendo a cabeça conforme direção da serpente.
-        if snake_direction == UP:
-            snake[0] = (snake[0][0], snake[0][1] - 10)
-        if snake_direction == DOWN:
-            snake[0] = (snake[0][0], snake[0][1] + 10)
-        if snake_direction == RIGHT:
-            snake[0] = (snake[0][0] + 10, snake[0][1])
-        if snake_direction == LEFT:
-            snake[0] = (snake[0][0] - 10, snake[0][1])
+        if serpente.direction == "Subindo":
+            serpente.corpo[0] = (serpente.corpo[0][0], serpente.corpo[0][1] - 10)
+        if serpente.direction == "Descendo":
+            serpente.corpo[0] = (serpente.corpo[0][0], serpente.corpo[0][1] + 10)
+        if serpente.direction == "para Direita":
+            serpente.corpo[0] = (serpente.corpo[0][0] + 10, serpente.corpo[0][1])
+        if serpente.direction == "para Esquerda":
+            serpente.corpo[0] = (serpente.corpo[0][0] - 10, serpente.corpo[0][1])
 
        
         ### Limpa a tela para redesenhar os objetos
@@ -110,9 +116,9 @@ while True:
         pygame.display.set_caption('Snake - pyGame - score: {}'.format(score))
 
         # Desenha a cobra e a maçã em suas respectivas posições
-        screen.blit(apple, apple_pos)
-        for pos in snake:
-            screen.blit(snake_skin, pos)
+        screen.blit(comida.pele, comida.posicao)
+        for pos in serpente.corpo:
+            screen.blit(serpente.pele, pos)
 
         pygame.display.update()
     
@@ -143,9 +149,10 @@ while True:
 
         if restart:
             game_over = False
-            snake = [(200, 200), (210, 200), (220,200)]
-            snake_skin = pygame.Surface((10,10))
-            snake_skin.fill((255,255,255))
+            restart = False
+            game_speed = 14
+            serpente = Snake()
+            comida = Food()
             score = 0
         
         pygame.display.update()
