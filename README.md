@@ -4,7 +4,7 @@ Jogo de snake feito por 'filhoweuler' com pygame. Visite a página do autor para
 Foram implementadas pequenas alterações:
  - a pontuação passou a ser renderizada no título da janela
  - a tela de fim de jogo passou a permitir opção de reiniciar (F2) ou sair (ESC)
- - a cada maçã comida, a velocidade da serpente aumenta
+ - a maçã foi sunstituída por outras instâncias que se movimentam: rato, sapo e coelho
  - os comentários foram reescritos em português
  - foi incluída uma licença no projeto
 
